@@ -109,4 +109,23 @@ contract PointsHookTest is BaseTest {
         assertEq(hook.points(address(this)), 0);
 
     }
+
+    function testFuzz_buyWithEth_givesTwentyPercent(uint256 amountIn) public {
+    // 1. Keep the random amount between 0.001 ETH and 10 ETH
+    amountIn = bound(amountIn, 0.001 ether, 10 ether);
+
+    // 2. Buy the token with that much ETH, with our address in hookData
+    swapRouter.swapExactTokensForTokens{value: amountIn}({
+        amountIn: amountIn,
+        amountOutMin: 0,
+        zeroForOne: true,
+        poolKey: poolKey,
+        hookData: abi.encode(address(this)),
+        receiver: address(this),
+        deadline: block.timestamp + 1
+    });
+
+    // 3. Points should always be exactly 20% of what we spent
+    assertEq(hook.points(address(this)), amountIn/5);
+}
 }
