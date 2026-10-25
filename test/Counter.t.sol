@@ -42,7 +42,8 @@ contract CounterTest is BaseTest {
     function setUp() public {
         // Deploys all required artifacts.
         deployArtifactsAndLabel();
-
+        
+        // here you create two test tokens
         (currency0, currency1) = deployCurrencyPair();
 
         // Deploy the hook to an address with the correct flags
@@ -75,15 +76,14 @@ contract CounterTest is BaseTest {
         );
 
         (tokenId,) = positionManager.mint(
-            poolKey,
-            tickLower,
-            tickUpper,
-            liquidityAmount,
-            amount0Expected + 1,
-            amount1Expected + 1,
-            address(this),
-            block.timestamp,
-            Constants.ZERO_BYTES
+            poolKey,                // which pool
+            tickLower, tickUpper,   // the range
+            liquidityAmount,        // how much liquidity
+            amount0Expected + 1,    // max token0 willing to pay
+            amount1Expected + 1,    // max token1 willing to pay
+            address(this),          // who owns the position
+            block.timestamp,        // deadline
+            Constants.ZERO_BYTES    // hookData: none
         );
     }
 
